@@ -13,6 +13,14 @@
             <p>{{ $employee->nama_lengkap }}</p>
         </div>
         <div class="mb-3">
+            <strong>Departemen:</strong>
+            <p>{{ $employee->department->nama_departemen }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Jabatan:</strong>
+            <p>{{ $employee->position->nama_jabatan }}</p>
+        </div>
+        <div class="mb-3">
             <strong>Email:</strong>
             <p>{{ $employee->email }}</p>
         </div>

@@ -79,7 +79,9 @@ class EmployeeController extends Controller
     public function edit($id)
     {
         $employee = Employee::findOrFail($id);
-        return view('employees.edit', compact('employee'));
+        $departments = Department::all();
+        $positions = Position::all();
+        return view('employees.edit', compact('employee', 'departments', 'positions'));
     }
 
     /**
@@ -91,6 +93,8 @@ class EmployeeController extends Controller
 
         $request->validate([
             'nama_lengkap' => 'required|string|max:100',
+            'department_id' => 'required|exists:departments,id',
+            'position_id' => 'required|exists:positions,id',
             'email' => 'required|email|max:100|unique:employees,email,' . $employee->id,
             'nomor_telepon' => 'required|string|max:15',
             'tanggal_lahir' => 'required|date',
