@@ -15,7 +15,6 @@ return new class extends Migration
             $table->time('waktu_masuk')->nullable();
             $table->time('waktu_keluar')->nullable();
             $table->enum('status_absensi', ['hadir', 'izin', 'sakit', 'alpha']);
-            $table->integer('jumlah_jam_lembur')->nullable();
             $table->integer('penyesuaian_gaji')->default(0); // bisa minus atau plus
             $table->timestamps();
         });
