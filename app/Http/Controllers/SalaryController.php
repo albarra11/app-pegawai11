@@ -84,10 +84,20 @@ class SalaryController extends Controller
     /**
      * Hitung potongan absensi
      */
+    private function parseBulanTahun($bulan)
+    {
+        $date = Carbon::createFromFormat('Y-m', $bulan);
+        return [
+            'month' => $date->format('m'),
+            'year' => $date->format('Y'),
+        ];
+    }
+    
     private function hitungPotonganAbsensi($employeeId, $bulan)
     {
-        $month = date('m', strtotime("1 " . $bulan));
-        $year = date('Y', strtotime("1 " . $bulan));
+        $bulanTahun = $this->parseBulanTahun($bulan);
+        $month = $bulanTahun['month'];
+        $year = $bulanTahun['year'];
 
         $absensi = Attendance::where('employee_id', $employeeId)
             ->whereMonth('tanggal', $month)
@@ -112,8 +122,9 @@ class SalaryController extends Controller
      */
     private function hitungBonusLembur($employeeId, $bulan)
     {
-        $month = date('m', strtotime("1 " . $bulan));
-        $year = date('Y', strtotime("1 " . $bulan));
+        $bulanTahun = $this->parseBulanTahun($bulan);
+        $month = $bulanTahun['month'];
+        $year = $bulanTahun['year'];
 
         return Attendance::where('employee_id', $employeeId)
             ->whereMonth('tanggal', $month)

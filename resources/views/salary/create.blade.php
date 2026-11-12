@@ -25,7 +25,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Bulan (misal: Oktober 2025)</label>
-                        <input type="text" name="bulan" class="form-control" required>
+                        <input type="month" name="bulan" class="form-control" value="{{ old('bulan', $salary->bulan ?? date('Y-m')) }}" required>
                     </div>
 
                     <div class="mb-3">
