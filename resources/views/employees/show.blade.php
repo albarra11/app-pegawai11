@@ -1,42 +1,44 @@
-<!DOCTYPE html>
-<html>
+@extends('master')
 
-<head>
-    <title>Detail Pegawai</title>
-</head>
+@section('title', 'Detail Karyawan')
 
-<body>
-    <h1>Detail Pegawai</h1>
-    <table border="1" cellpadding="8" cellspacing="0">
-        <tr>
-            <th>Nama Lengkap</th>
-            <td>{{ $employee->nama_lengkap }}</td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{{ $employee->email }}</td>
-        </tr>
-        <tr>
-            <th>Nomor Telepon</th>
-            <td>{{ $employee->nomor_telepon }}</td>
-        </tr>
-        <tr>
-            <th>Tanggal Lahir</th>
-            <td>{{ $employee->tanggal_lahir }}</td>
-        </tr>
-        <tr>
-            <th>Alamat</th>
-            <td>{{ $employee->alamat }}</td>
-        </tr>
-        <tr>
-            <th>Tanggal Masuk</th>
-            <td>{{ $employee->tanggal_masuk }}</td>
-        </tr>
-        <tr>
-            <th>Status</th>
-            <td>{{ $employee->status }}</td>
-        </tr>
-    </table>
-</body>
-
-</html>
+@section('content')
+<div class="card shadow-sm">
+    <div class="card-header bg-info text-white fw-bold">
+        Detail Karyawan
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <strong>Nama Lengkap:</strong>
+            <p>{{ $employee->nama_lengkap }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Email:</strong>
+            <p>{{ $employee->email }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Nomor Telepon:</strong>
+            <p>{{ $employee->nomor_telepon }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Tanggal Lahir:</strong>
+            <p>{{ \Carbon\Carbon::parse($employee->tanggal_lahir)->format('d M Y') }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Alamat:</strong>
+            <p>{{ $employee->alamat }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Tanggal Masuk:</strong>
+            <p>{{ \Carbon\Carbon::parse($employee->tanggal_masuk)->format('d M Y') }}</p>
+        </div>
+        <div class="mb-3">
+            <strong>Status:</strong>
+            <span class="badge {{ $employee->status == 'aktif' ? 'bg-success' : 'bg-secondary' }}">
+                {{ ucfirst($employee->status) }}
+            </span>
+        </div>
+        <a href="{{ route('employees.index') }}" class="btn btn-secondary">Kembali</a>
+    </div>
+</div>
+@endsection
