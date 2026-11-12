@@ -102,19 +102,9 @@ class SalaryController extends Controller
         $absensi = Attendance::where('employee_id', $employeeId)
             ->whereMonth('tanggal', $month)
             ->whereYear('tanggal', $year)
-            ->get();
+            ->sum('potongan');
 
-        $potongan = 0;
-
-        foreach ($absensi as $a) {
-            if ($a->status_absensi == 'alpha') {
-                $potongan += 500000;
-            } elseif ($a->status_absensi == 'telat') {
-                $potongan += 100000;
-            }
-        }
-
-        return $potongan;
+        return $absensi;
     }
 
     /**
