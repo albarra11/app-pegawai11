@@ -6,7 +6,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <p><strong>Nama Pegawai:</strong> {{ $attendance->employee->nama ?? '-' }}</p>
+            <p><strong>Nama Pegawai:</strong> {{ $attendance->employee->nama_lengkap ?? '-' }}</p>
             <p><strong>Tanggal:</strong> {{ $attendance->tanggal }}</p>
             <p><strong>Waktu Masuk:</strong> {{ $attendance->waktu_masuk ?? '-' }}</p>
             <p><strong>Waktu Keluar:</strong> {{ $attendance->waktu_keluar ?? '-' }}</p>

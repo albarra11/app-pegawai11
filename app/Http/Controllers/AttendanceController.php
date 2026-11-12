@@ -53,26 +53,27 @@ class AttendanceController extends Controller
         if ($status == 'hadir' && $request->waktu_masuk) {
             if (strtotime($request->waktu_masuk) > strtotime($jamMasukDefault)) {
                 $status   = 'telat';
-                $potongan = config('attendance.potongan_telat', 10000);
             }
         }
 
         // -----------------------
-        // 2. POTONGAN ALPHA
+        // 2. HITUNG POTONGAN
         // -----------------------
-        if ($status == 'alpha') {
-            $potongan = config('attendance.potongan_alpha', 50000);
+        if ($status == 'telat') {
+            $potongan = config('attendance.potongan_telat', 100000);
+        } elseif ($status == 'alpha') {
+            $potongan = config('attendance.potongan_alpha', 500000);
         }
 
         // -----------------------
-        // 3. HITUNG LEMBUR OTOMATIS
+        // 3. HITUNG LEMBUR OTOMATIS (Hanya jika status hadir atau telat)
         // -----------------------
-        if ($request->waktu_keluar && strtotime($request->waktu_keluar) > strtotime($jamKeluarDefault)) {
+        if (in_array($status, ['hadir', 'telat']) && $request->waktu_keluar && strtotime($request->waktu_keluar) > strtotime($jamKeluarDefault)) {
             $selisihDetik = strtotime($request->waktu_keluar) - strtotime($jamKeluarDefault);
             $lemburJam = floor($selisihDetik / 3600);
         }
 
-        $bonusLembur = $lemburJam * config('attendance.tarif_lembur_per_jam', 15000);
+        $bonusLembur = $lemburJam * config('attendance.tarif_lembur_per_jam', 100000);
 
         Attendance::create([
             'employee_id'     => $request->employee_id,
@@ -135,20 +136,21 @@ class AttendanceController extends Controller
         if ($status == 'hadir' && $request->waktu_masuk) {
             if (strtotime($request->waktu_masuk) > strtotime($jamMasukDefault)) {
                 $status   = 'telat';
-                $potongan = config('attendance.potongan_telat');
             }
         }
 
-        if ($status == 'alpha') {
-            $potongan = config('attendance.potongan_alpha');
+        if ($status == 'telat') {
+            $potongan = config('attendance.potongan_telat', 100000);
+        } elseif ($status == 'alpha') {
+            $potongan = config('attendance.potongan_alpha', 500000);
         }
 
-        if ($request->waktu_keluar && strtotime($request->waktu_keluar) > strtotime($jamKeluarDefault)) {
+        if (in_array($status, ['hadir', 'telat']) && $request->waktu_keluar && strtotime($request->waktu_keluar) > strtotime($jamKeluarDefault)) {
             $selisihDetik = strtotime($request->waktu_keluar) - strtotime($jamKeluarDefault);
             $lemburJam = floor($selisihDetik / 3600);
         }
 
-        $bonusLembur = $lemburJam * config('attendance.tarif_lembur_per_jam');
+        $bonusLembur = $lemburJam * config('attendance.tarif_lembur_per_jam', 100000);
 
         $attendance->update([
             'employee_id'    => $request->employee_id,

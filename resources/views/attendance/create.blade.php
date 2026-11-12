@@ -36,11 +36,6 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Jumlah Jam Lembur (opsional)</label>
-                        <input type="number" name="jumlah_jam_lembur" class="form-control" min="0">
-                    </div>
-
-                    <div class="mb-3">
                         <label for="status_absensi" class="form-label">Status Absensi</label>
                         <select name="status_absensi" class="form-select" required>
                             <option value="hadir">Hadir</option>

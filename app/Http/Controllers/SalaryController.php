@@ -6,6 +6,7 @@ use App\Models\Salary;
 use App\Models\Employee;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 
 class SalaryController extends Controller
@@ -24,7 +25,7 @@ class SalaryController extends Controller
      */
     public function create()
     {
-        $employees = Employee::orderBy('nama_lengkap', 'asc')->get();
+        $employees = Employee::with('position')->orderBy('nama_lengkap', 'asc')->get();
         return view('salary.create', compact('employees'));
     }
 
@@ -34,11 +35,19 @@ class SalaryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
+            'employee_id' => [
+                'required',
+                'exists:employees,id',
+                Rule::unique('salaries')->where(function ($query) use ($request) {
+                    return $query->where('bulan', $request->bulan);
+                }),
+            ],
             'bulan' => 'required|string|max:20',
             'gaji_pokok' => 'required|numeric|min:0',
             'tunjangan' => 'nullable|numeric|min:0',
             'tanggal_pembayaran' => 'nullable|date',
+        ], [
+            'employee_id.unique' => 'Gaji untuk pegawai ini pada periode tersebut sudah pernah dibuat!',
         ]);
 
         // ✔ Validasi berdasarkan tanggal pembayaran yang dipilih user
@@ -84,27 +93,27 @@ class SalaryController extends Controller
     /**
      * Hitung potongan absensi
      */
+    private function parseBulanTahun($bulan)
+    {
+        $date = Carbon::createFromFormat('Y-m', $bulan);
+        return [
+            'month' => $date->format('m'),
+            'year' => $date->format('Y'),
+        ];
+    }
+    
     private function hitungPotonganAbsensi($employeeId, $bulan)
     {
-        $month = date('m', strtotime("1 " . $bulan));
-        $year = date('Y', strtotime("1 " . $bulan));
+        $bulanTahun = $this->parseBulanTahun($bulan);
+        $month = $bulanTahun['month'];
+        $year = $bulanTahun['year'];
 
         $absensi = Attendance::where('employee_id', $employeeId)
             ->whereMonth('tanggal', $month)
             ->whereYear('tanggal', $year)
-            ->get();
+            ->sum('potongan');
 
-        $potongan = 0;
-
-        foreach ($absensi as $a) {
-            if ($a->status_absensi == 'alpha') {
-                $potongan += 500000;
-            } elseif ($a->status_absensi == 'telat') {
-                $potongan += 100000;
-            }
-        }
-
-        return $potongan;
+        return $absensi;
     }
 
     /**
@@ -112,8 +121,9 @@ class SalaryController extends Controller
      */
     private function hitungBonusLembur($employeeId, $bulan)
     {
-        $month = date('m', strtotime("1 " . $bulan));
-        $year = date('Y', strtotime("1 " . $bulan));
+        $bulanTahun = $this->parseBulanTahun($bulan);
+        $month = $bulanTahun['month'];
+        $year = $bulanTahun['year'];
 
         return Attendance::where('employee_id', $employeeId)
             ->whereMonth('tanggal', $month)
@@ -138,7 +148,7 @@ class SalaryController extends Controller
     public function edit(string $id)
     {
         $salary = Salary::findOrFail($id);
-        $employees = Employee::orderBy('nama_lengkap', 'asc')->get();
+        $employees = Employee::with('position')->orderBy('nama_lengkap', 'asc')->get();
         return view('salary.edit', compact('salary', 'employees'));
     }
 
@@ -148,11 +158,19 @@ class SalaryController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'employee_id' => 'required|exists:employees,id',
+            'employee_id' => [
+                'required',
+                'exists:employees,id',
+                Rule::unique('salaries')->where(function ($query) use ($request) {
+                    return $query->where('bulan', $request->bulan);
+                })->ignore($id),
+            ],
             'bulan' => 'required|string|max:20',
             'gaji_pokok' => 'required|numeric|min:0',
             'tunjangan' => 'nullable|numeric|min:0',
             'tanggal_pembayaran' => 'nullable|date',
+        ], [
+            'employee_id.unique' => 'Gaji untuk pegawai ini pada periode tersebut sudah pernah dibuat!',
         ]);
 
         // ✔ Validasi berdasarkan tanggal pembayaran user

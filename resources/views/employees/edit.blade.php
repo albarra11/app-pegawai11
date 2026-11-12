@@ -17,6 +17,25 @@
                 <input type="text" name="nama_lengkap" class="form-control" value="{{ $employee->nama_lengkap }}" required>
             </div>
             <div class="mb-3">
+                <label class="form-label">Departemen</label>
+                    <select name="department_id" class="form-select" required>
+                        <option value="">-- Pilih Departemen --</option>
+                        @foreach ($departments as $dept)
+                            <option value="{{ $dept->id }}">{{ $dept->nama_departemen }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+            <div class="mb-3">
+                <label class="form-label">Jabatan</label>
+                    <select name="position_id" class="form-select" required>
+                        <option value="">-- Pilih Jabatan --</option>
+                        @foreach ($positions as $pos)
+                            <option value="{{ $pos->id }}">{{ $pos->nama_jabatan }}</option>
+                        @endforeach
+                    </select>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-control" value="{{ $employee->email }}" required>
             </div>

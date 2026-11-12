@@ -72,7 +72,7 @@
             <h5 class="mb-3 text-primary">Informasi Pegawai</h5>
 
             <p><span class="label">Nama Pegawai</span>: {{ $salary->employee->nama_lengkap }}</p>
-            <p><span class="label">Jabatan</span>: {{ $salary->employee->jabatan ?? '-' }}</p>
+            <p><span class="label">Jabatan</span>: {{ $salary->employee->position->nama_jabatan ?? '-' }}</p>
             <p><span class="label">Periode Gaji</span>: {{ $salary->bulan }}</p>
 
             <hr>
